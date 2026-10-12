@@ -10,7 +10,6 @@ export default function Header() {
           <div className="top-bar-contact">
             <span>📍 20B Đường số 2, P. Trường Thọ, TP. Thủ Đức, TP.HCM</span>
             <a href="tel:0909177415">📞 Hotline: 0909.177.415</a>
-            <a href="mailto:vinhcuusaigon@gmail.com">✉️ vinhcuusaigon@gmail.com</a>
           </div>
           <div>
             <span>🕒 Giờ mở cửa: 07:30 - 17:30 (Thứ 2 - Thứ 7)</span>
@@ -44,9 +43,6 @@ export default function Header() {
           <Link href="/san-pham" className="btn btn-outline nav-calc-shortcut" title="Công cụ dự toán số lượng gạch mảng tường">
             <span>📐 Dự Toán</span>
           </Link>
-          <a href="tel:0909177415" className="btn btn-accent">
-            <span>📞 Báo Giá Nhanh</span>
-          </a>
         </div>
       </div>
     </header>
