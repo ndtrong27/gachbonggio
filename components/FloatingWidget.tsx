@@ -298,7 +298,19 @@ export default function FloatingWidget() {
 
       {/* Floating Action Buttons */}
       <div className="floating-widget" aria-label="Kênh liên hệ và tư vấn trực tiếp">
-        {/* Prominent Live Chat Button (Replaces float-btn-hotline) */}
+        {/* Zalo Button (Positioned on top) */}
+        <a
+          href="https://zalo.me/0909177415"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="float-btn float-btn-zalo"
+          title="Chat Zalo với chúng tôi"
+          aria-label="Liên hệ qua Zalo"
+        >
+          <span style={{ fontWeight: 800, fontSize: '0.85rem' }}>Zalo</span>
+        </a>
+
+        {/* Prominent Live Chat Button (Positioned at bottom) */}
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
@@ -322,7 +334,7 @@ export default function FloatingWidget() {
               )}
             </>
           )}
-          {/* Prominent floating badge tag next to button on desktop */}
+          {/* Tooltip label: hidden by default, reveals smoothly on hover */}
           {!isOpen && (
             <span className="float-chat-tag">
               <span className="tag-dot" />
@@ -330,18 +342,6 @@ export default function FloatingWidget() {
             </span>
           )}
         </button>
-
-        {/* Zalo Button (Preserved) */}
-        <a
-          href="https://zalo.me/0909177415"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="float-btn float-btn-zalo"
-          title="Chat Zalo với chúng tôi"
-          aria-label="Liên hệ qua Zalo"
-        >
-          <span style={{ fontWeight: 800, fontSize: '0.85rem' }}>Zalo</span>
-        </a>
       </div>
     </>
   );
