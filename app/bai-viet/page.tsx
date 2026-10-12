@@ -3,9 +3,28 @@ import Link from 'next/link';
 import { getPublishedArticles } from '@/lib/articles';
 import ArticleCard from '@/components/ArticleCard';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gachbonggio.vercel.app';
+
 export const metadata: Metadata = {
-  title: 'Cẩm Nang Kiến Trúc & Tư Vấn Gạch Bông Gió | Vĩnh Cửu Sài Gòn',
+  title: 'Cẩm Nang Kiến Trúc & Tư Vấn Gạch Bông Gió',
   description: 'Tổng hợp các bài viết chuyên sâu về kiến trúc mặt tiền, giải pháp chống nóng, thông gió tự nhiên và phong cách thiết kế ứng dụng gạch bông gió mỹ thuật.',
+  alternates: {
+    canonical: '/bai-viet',
+  },
+  openGraph: {
+    title: 'Cẩm Nang Kiến Trúc & Tư Vấn Gạch Bông Gió | Vĩnh Cửu Sài Gòn',
+    description: 'Tổng hợp các giải pháp chống nóng mặt tiền, kỹ thuật thi công và cẩm nang kiến trúc ứng dụng gạch bông gió mỹ thuật.',
+    url: `${siteUrl}/bai-viet`,
+    type: 'website',
+    images: [
+      {
+        url: '/images/banners/banner-9.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Cẩm nang kiến trúc gạch bông gió Vĩnh Cửu Sài Gòn',
+      },
+    ],
+  },
 };
 
 export const revalidate = 60; // ISR 60s
@@ -13,8 +32,33 @@ export const revalidate = 60; // ISR 60s
 export default async function ArticlesIndexPage() {
   const articles = await getPublishedArticles();
 
+  const articlesIndexSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'Trang Chủ',
+        'item': siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': 'Cẩm Nang Kiến Trúc & Bài Viết',
+        'item': `${siteUrl}/bai-viet`,
+      },
+    ],
+  };
+
   return (
     <main className="section-padding" style={{ background: '#f8fafc', minHeight: '80vh' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articlesIndexSchema) }}
+        suppressHydrationWarning
+      />
+
       <div className="container">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="breadcrumb-nav" style={{ marginBottom: '2rem' }}>

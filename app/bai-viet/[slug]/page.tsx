@@ -17,6 +17,8 @@ export async function generateStaticParams() {
   }));
 }
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gachbonggio.vercel.app';
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
@@ -27,23 +29,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const articleUrl = `${siteUrl}/bai-viet/${article.slug}`;
+
   return {
     title: `${article.title} | Vĩnh Cửu Sài Gòn`,
     description: article.excerpt,
+    alternates: {
+      canonical: articleUrl,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt,
+      url: articleUrl,
       type: 'article',
       publishedTime: article.publishedAt,
       authors: [article.author],
       images: [
         {
-          url: article.coverImage,
+          url: article.coverImage.startsWith('http') ? article.coverImage : `${siteUrl}${article.coverImage}`,
           width: 800,
           height: 600,
           alt: article.title,
         },
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt,
+      images: [article.coverImage.startsWith('http') ? article.coverImage : `${siteUrl}${article.coverImage}`],
     },
   };
 }
@@ -56,26 +70,63 @@ export default async function ArticleDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Schema Structured Data for SEO
+  const articleUrl = `${siteUrl}/bai-viet/${article.slug}`;
+  const fullCoverImageUrl = article.coverImage.startsWith('http') ? article.coverImage : `${siteUrl}${article.coverImage}`;
+
+  // Schema Structured Data for SEO (@graph: BreadcrumbList + Article)
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    description: article.excerpt,
-    image: [article.coverImage],
-    datePublished: article.publishedAt,
-    author: {
-      '@type': 'Organization',
-      name: article.author,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Vĩnh Cửu Sài Gòn',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://gachbonggio.net/images/logo.png',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+          {
+            '@type': 'ListItem',
+            'position': 1,
+            'name': 'Trang Chủ',
+            'item': siteUrl,
+          },
+          {
+            '@type': 'ListItem',
+            'position': 2,
+            'name': 'Cẩm Nang Kiến Trúc',
+            'item': `${siteUrl}/bai-viet`,
+          },
+          {
+            '@type': 'ListItem',
+            'position': 3,
+            'name': article.title,
+            'item': articleUrl,
+          },
+        ],
       },
-    },
+      {
+        '@type': 'Article',
+        '@id': `${articleUrl}#article`,
+        headline: article.title,
+        description: article.excerpt,
+        image: [fullCoverImageUrl],
+        datePublished: article.publishedAt,
+        dateModified: article.publishedAt,
+        author: {
+          '@type': 'Organization',
+          name: article.author,
+          url: siteUrl,
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Vĩnh Cửu Sài Gòn',
+          logo: {
+            '@type': 'ImageObject',
+            url: `${siteUrl}/images/logo.png`,
+          },
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': articleUrl,
+        },
+      },
+    ],
   };
 
   return (
