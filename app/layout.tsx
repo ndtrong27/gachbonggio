@@ -1,8 +1,24 @@
 import type { Metadata } from "next";
+import { Be_Vietnam_Pro, Outfit } from "next/font/google";
 import "./globals.css";
 import SiteShell from "@/components/SiteShell";
 
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gachbonggio.vercel.app";
+
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -150,7 +166,11 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="vi" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="vi" className={`${beVietnamPro.variable} ${outfit.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
+      <head>
+        <link rel="preconnect" href="https://yxzlcvhprkdctoeqjmrw.supabase.co" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://yxzlcvhprkdctoeqjmrw.supabase.co" />
+      </head>
       <body suppressHydrationWarning>
         <script
           id="schema-org-graph"
@@ -163,3 +183,4 @@ export default function RootLayout({
     </html>
   );
 }
+

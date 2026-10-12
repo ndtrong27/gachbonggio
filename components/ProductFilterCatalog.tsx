@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Tables } from '@/types/database.types';
-import BrickCalculatorModal from './BrickCalculatorModal';
+
+const BrickCalculatorModal = dynamic(() => import('./BrickCalculatorModal'), {
+  ssr: false,
+});
 
 interface ProductFilterCatalogProps {
   products: Tables<'products'>[];

@@ -1,9 +1,14 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import Header from './Header';
 import Footer from './Footer';
-import FloatingWidget from './FloatingWidget';
+
+// Defer live-chat and floating widget loading until client hydration to optimize TBT & INP
+const FloatingWidget = dynamic(() => import('./FloatingWidget'), {
+  ssr: false,
+});
 
 interface SiteShellProps {
   children: React.ReactNode;

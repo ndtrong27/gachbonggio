@@ -82,7 +82,6 @@ export default function ProductShowcaseLayout({
                     width={150}
                     height={50}
                     style={{ objectFit: 'contain', width: 'auto', height: '42px' }}
-                    priority
                   />
                 </div>
                 <div className="showcase-badge-pill">
