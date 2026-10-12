@@ -40,8 +40,29 @@ export default function Header() {
         </nav>
 
         <div className="nav-actions">
-          <Link href="/san-pham" className="btn btn-outline nav-calc-shortcut" title="Công cụ dự toán số lượng gạch mảng tường">
-            <span>📐 Dự Toán</span>
+          <Link
+            href="/san-pham"
+            className="btn-nav-cta"
+            title="Công cụ dự toán số lượng & chi phí gạch bông gió tự động"
+            id="nav-cta-calculator"
+          >
+            <span className="btn-nav-cta-icon">📐</span>
+            <span className="btn-nav-cta-label">Dự Toán Vật Tư</span>
+            <span className="btn-nav-cta-badge">Miễn Phí</span>
+            <svg
+              className="btn-nav-cta-arrow"
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </Link>
         </div>
       </div>
