@@ -33,9 +33,22 @@ export default function FloatingWidget() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [showCustomerInfo, setShowCustomerInfo] = useState(false);
   const [unreadCount, setUnreadCount] = useState(1);
+  const [sessionId, setSessionId] = useState('');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize session ID for conversation logging
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      let stored = sessionStorage.getItem('vcsg_chat_session_id');
+      if (!stored) {
+        stored = `vcsg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        sessionStorage.setItem('vcsg_chat_session_id', stored);
+      }
+      setSessionId(stored);
+    }
+  }, []);
 
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
@@ -52,7 +65,7 @@ export default function FloatingWidget() {
     }
   }, [isOpen, messages]);
 
-  // Send message to n8n webhook
+  // Send message to chatbot API (routes through n8n & logs to Supabase)
   const handleSendMessage = async (textToSend?: string) => {
     const messageContent = (textToSend || input).trim();
     if (!messageContent || isLoading) return;
@@ -72,7 +85,8 @@ export default function FloatingWidget() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://duytrong.app.n8n.cloud/webhook/gach-bong-gio', {
+      const activeSession = sessionId || `vcsg_${Date.now()}`;
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,6 +95,7 @@ export default function FloatingWidget() {
           message: messageContent,
           name: customerName.trim() || 'Khách hàng',
           phone: customerPhone.trim() || '',
+          sessionId: activeSession,
         }),
       });
 

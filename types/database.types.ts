@@ -12,6 +12,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_chat_logs: {
+        Row: {
+          admin_notes: string | null
+          bot_response: string
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          id: string
+          rating: string | null
+          reviewed_at: string | null
+          session_id: string
+          user_message: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          bot_response: string
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          rating?: string | null
+          reviewed_at?: string | null
+          session_id: string
+          user_message: string
+        }
+        Update: {
+          admin_notes?: string | null
+          bot_response?: string
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          rating?: string | null
+          reviewed_at?: string | null
+          session_id?: string
+          user_message?: string
+        }
+        Relationships: []
+      }
+      ai_guidelines: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          priority: number
+          rule_content: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          priority?: number
+          rule_content: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          priority?: number
+          rule_content?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       articles: {
         Row: {
           author: string | null
