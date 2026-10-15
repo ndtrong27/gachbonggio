@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Outfit } from "next/font/google";
 import "./globals.css";
 import SiteShell from "@/components/SiteShell";
+import { Analytics } from "@vercel/analytics/next";
+
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
@@ -179,6 +181,7 @@ export default function RootLayout({
           suppressHydrationWarning
         />
         <SiteShell>{children}</SiteShell>
+        <Analytics />
       </body>
     </html>
   );
