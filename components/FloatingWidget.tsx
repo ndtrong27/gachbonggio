@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, Send, X, Bot, User, Sparkles, ChevronDown, CheckCheck, RefreshCw } from 'lucide-react';
+import { ChatMarkdown } from '@/components/ChatMarkdown';
 
 interface ChatMessage {
   id: string;
@@ -232,7 +233,9 @@ export default function FloatingWidget() {
                   </div>
                 )}
                 <div className={`live-chat-bubble ${msg.sender === 'user' ? 'bubble-user' : 'bubble-bot'}`}>
-                  <div className="bubble-text">{msg.text}</div>
+                  <div className="bubble-text">
+                    {msg.sender === 'bot' ? <ChatMarkdown content={msg.text} /> : msg.text}
+                  </div>
                   <div className="bubble-meta">
                     <span className="bubble-time">{msg.time}</span>
                     {msg.sender === 'user' && <CheckCheck size={13} className="bubble-check" />}

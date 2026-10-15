@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-const N8N_WEBHOOK_URL = process.env.N8N_CHAT_WEBHOOK_URL || 'https://duytrong.app.n8n.cloud/webhook/gach-bong-gio';
+const N8N_WEBHOOK_URL = process.env.N8N_CHAT_WEBHOOK_URL || 'https://trongtrobui.app.n8n.cloud/webhook/gach-bong-gio';
 
 export async function POST(req: NextRequest) {
   try {

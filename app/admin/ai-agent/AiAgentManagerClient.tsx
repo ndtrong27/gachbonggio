@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Tables } from '@/types/database.types';
+import { ChatMarkdown } from '@/components/ChatMarkdown';
 
 type ChatLog = Tables<'ai_chat_logs'>;
 type Guideline = Tables<'ai_guidelines'>;
@@ -477,7 +478,9 @@ export default function AiAgentManagerClient() {
                       </div>
                       <div className="dialog-row bot-row">
                         <span className="bubble-label">AI Agent:</span>
-                        <div className="bubble-text bot-bubble">{log.bot_response}</div>
+                        <div className="bubble-text bot-bubble">
+                          <ChatMarkdown content={log.bot_response} />
+                        </div>
                       </div>
                     </div>
 
@@ -707,7 +710,11 @@ export default function AiAgentManagerClient() {
             {testMessages.map((msg, idx) => (
               <div key={idx} className={`playground-bubble-row ${msg.sender === 'user' ? 'user' : 'bot'}`}>
                 <div className={`playground-bubble ${msg.sender === 'user' ? 'user-bg' : 'bot-bg'}`}>
-                  <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{msg.text}</div>
+                  {msg.sender === 'bot' ? (
+                    <ChatMarkdown content={msg.text} />
+                  ) : (
+                    <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{msg.text}</div>
+                  )}
                   <div className="playground-time">{msg.time}</div>
                 </div>
               </div>
