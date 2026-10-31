@@ -14,8 +14,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
 
   // Get color style badge
   const getColorBadge = (color: string) => {
-    const c = color.toLowerCase();
-    if (c.includes('trắng')) return { bg: '#f7fafc', color: '#4a5568', border: '#e2e8f0' };
+    const c = (color || '').toLowerCase();
+    if (c.includes('trắng')) return { bg: '#f8fafc', color: '#475569', border: '#e2e8f0' };
+    if (c.includes('xám') || c.includes('xi măng')) return { bg: '#f1f5f9', color: '#334155', border: '#cbd5e1' };
     if (c.includes('đất nung') || c.includes('đỏ')) return { bg: '#fff5f5', color: '#c53030', border: '#fed7d7' };
     if (c.includes('xanh')) return { bg: '#e6fffa', color: '#234e52', border: '#b2f5ea' };
     if (c.includes('vàng') || c.includes('lươn')) return { bg: '#fffff0', color: '#744210', border: '#fefcbf' };

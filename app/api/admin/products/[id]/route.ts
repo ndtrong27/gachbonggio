@@ -23,14 +23,17 @@ export async function PUT(req: NextRequest, { params }: Params) {
       updated_at: new Date().toISOString(),
     };
 
-    if (body.name !== undefined) updateData.name = body.name;
-    if (body.code !== undefined) updateData.code = body.code;
-    if (body.category !== undefined) updateData.category = body.category;
-    if (body.size !== undefined) updateData.size = body.size;
-    if (body.color !== undefined) updateData.color = body.color;
-    if (body.price_display !== undefined) updateData.price_display = body.price_display;
-    if (body.image_url !== undefined) updateData.image_url = body.image_url;
-    if (body.in_stock !== undefined) updateData.in_stock = body.in_stock;
+    if (body.name !== undefined) updateData.name = body.name.trim();
+    if (body.code !== undefined) updateData.code = body.code.trim();
+    if (body.category !== undefined) updateData.category = body.category.trim();
+    if (body.size !== undefined) updateData.size = body.size.trim();
+    if (body.color !== undefined) {
+      const c = body.color.trim();
+      updateData.color = c.toLowerCase() === 'xi măng' ? 'xám xi măng' : c;
+    }
+    if (body.price_display !== undefined) updateData.price_display = body.price_display.trim();
+    if (body.image_url !== undefined) updateData.image_url = body.image_url.trim();
+    if (body.in_stock !== undefined) updateData.in_stock = Boolean(body.in_stock);
 
     const { data, error } = await supabase
       .from('products')

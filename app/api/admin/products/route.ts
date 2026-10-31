@@ -60,17 +60,20 @@ export async function POST(req: NextRequest) {
 
     const slug = `${code.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`;
 
+    const rawColor = (color || 'Trắng').trim();
+    const finalColor = rawColor.toLowerCase() === 'xi măng' ? 'xám xi măng' : rawColor;
+
     const { data, error } = await supabase
       .from('products')
       .insert({
-        name,
-        code,
+        name: name.trim(),
+        code: code.trim(),
         slug,
-        category,
-        size: size || '290x290x90 mm',
-        color: color || 'Trắng',
-        price_display: price_display || 'Liên hệ',
-        image_url: image_url || '/images/logo.png',
+        category: category.trim(),
+        size: (size || '290x290x90 mm').trim(),
+        color: finalColor,
+        price_display: (price_display || 'Liên hệ').trim(),
+        image_url: (image_url || '/images/logo.png').trim(),
         in_stock: in_stock !== false,
       })
       .select()

@@ -160,7 +160,7 @@ export default function ProductManagerClient({ initialProducts }: ProductManager
         setProducts((prev) =>
           prev.map((item) => (item.id === editingProduct.id ? data.product : item))
         );
-        showToast(`✓ Đã cập nhật sản phẩm ${formCode} thành công!`);
+        showToast(`✓ Đã cập nhật sản phẩm ${formCode} & đồng bộ ngay vào AI Agent!`);
       } else {
         // CREATE
         const res = await fetch('/api/admin/products', {
@@ -182,7 +182,7 @@ export default function ProductManagerClient({ initialProducts }: ProductManager
         if (!res.ok) throw new Error(data.error || 'Lỗi thêm sản phẩm');
 
         setProducts((prev) => [data.product, ...prev]);
-        showToast(`✓ Đã thêm sản phẩm mới ${formCode} thành công!`);
+        showToast(`✓ Đã thêm sản phẩm mới ${formCode} & đồng bộ ngay vào AI Agent!`);
       }
 
       setIsModalOpen(false);
@@ -535,9 +535,29 @@ export default function ProductManagerClient({ initialProducts }: ProductManager
                     type="text"
                     value={formColor}
                     onChange={(e) => setFormColor(e.target.value)}
-                    placeholder="vd: Trắng, Xám xi măng, Men xanh đồng"
+                    placeholder="vd: Trắng, Xám xi măng, Men xanh đồng cổ"
                     className="admin-input"
                   />
+                  <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
+                    {['Trắng', 'Xám xi măng', 'Men xanh đồng cổ', 'Men vàng da lươn cổ', 'Đất nung'].map((col) => (
+                      <button
+                        key={col}
+                        type="button"
+                        onClick={() => setFormColor(col)}
+                        style={{
+                          fontSize: '0.75rem',
+                          padding: '0.15rem 0.45rem',
+                          borderRadius: '4px',
+                          border: '1px solid #cbd5e1',
+                          background: formColor === col ? '#0284c7' : '#f8fafc',
+                          color: formColor === col ? '#ffffff' : '#475569',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {col}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="admin-form-col">

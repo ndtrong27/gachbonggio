@@ -7,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.18"
   }
@@ -144,6 +146,30 @@ export type Database = {
         }
         Relationships: []
       }
+      gach_bong_gio: {
+        Row: {
+          content: string
+          embedding: string | null
+          id: number
+          metadata: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          embedding?: string | null
+          id: number
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          embedding?: string | null
+          id?: number
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string
@@ -200,7 +226,58 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_ai_agent_context: {
+        Args: { max_results?: number; user_query: string }
+        Returns: Json
+      }
+      get_products_pending_embedding: {
+        Args: { max_limit?: number }
+        Returns: {
+          content: string
+          id: number
+        }[]
+      }
+      match_gach_bong_gio: {
+        Args: { filter?: Json; match_count?: number; query_embedding: string }
+        Returns: {
+          content: string
+          id: number
+          metadata: Json
+          similarity: number
+        }[]
+      }
+      search_gach_bong_gio_catalog: {
+        Args: { max_results?: number; query_text: string }
+        Returns: {
+          category: string
+          code: string
+          color: string
+          id: number
+          image_url: string
+          name: string
+          price_display: string
+          size: string
+        }[]
+      }
+      search_products_catalog: {
+        Args: { max_results?: number; query_text: string }
+        Returns: {
+          category: string
+          code: string
+          color: string
+          id: number
+          image_url: string
+          name: string
+          price_display: string
+          size: string
+        }[]
+      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
+      update_product_embedding: {
+        Args: { p_embedding: string; p_id: number }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
@@ -293,3 +370,43 @@ export type TablesUpdate<
       ? U
       : never
     : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never) = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never) = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
