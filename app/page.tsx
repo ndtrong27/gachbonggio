@@ -1,10 +1,11 @@
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Tables } from '@/types/database.types';
 import CategoryCard from '@/components/CategoryCard';
 import ArticleCard from '@/components/ArticleCard';
 import HeroVisualSlider, { HeroSlideItem } from '@/components/HeroVisualSlider';
 import ProductShowcaseLayout from '@/components/ProductShowcaseLayout';
-import { getPublishedArticles } from '@/lib/articles';
+import { getDefaultHomepageArticles } from '@/lib/articles';
 
 // Server-side Data Fetching directly from Supabase
 async function getProducts() {
@@ -24,10 +25,8 @@ async function getProducts() {
 export const revalidate = 60; // ISR 60 seconds
 
 export default async function HomePage() {
-  const [allProducts, articles] = await Promise.all([
-    getProducts(),
-    getPublishedArticles(),
-  ]);
+  const allProducts = await getProducts();
+  const articles = getDefaultHomepageArticles();
 
   const xiMangProducts = allProducts.filter(p => p.category === 'Bông gió xi măng');
   const trangMenProducts = allProducts.filter(p => p.category === 'Bông gió tráng men');
@@ -280,6 +279,22 @@ export default async function HomePage() {
             {articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+            <Link
+              href="/bai-viet"
+              className="btn btn-outline"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontWeight: 600,
+                padding: '0.75rem 1.75rem',
+              }}
+            >
+              Xem tất cả bài viết kiến trúc & cẩm nang &rarr;
+            </Link>
           </div>
         </div>
       </section>

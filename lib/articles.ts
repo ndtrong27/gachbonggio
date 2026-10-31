@@ -98,6 +98,11 @@ export function mapDbArticleToArticle(db: Tables<'articles'>): Article {
   };
 }
 
+// Get the default showcase articles for Homepage (permanent & unchanging)
+export function getDefaultHomepageArticles(): Article[] {
+  return staticArticles;
+}
+
 // Fetch all published articles from Supabase with fallback to static articles
 export async function getPublishedArticles(): Promise<Article[]> {
   try {
