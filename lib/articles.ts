@@ -11,16 +11,41 @@ const categoryColorMap: Record<string, { bg: string; text: string; border: strin
 };
 
 export function mapDbArticleToArticle(db: Tables<'articles'>): Article {
-  let sections: ArticleSection[] = [];
+  let rawSections: any[] = [];
   if (Array.isArray(db.sections)) {
-    sections = db.sections as unknown as ArticleSection[];
+    rawSections = db.sections;
   } else if (typeof db.sections === 'string') {
     try {
-      sections = JSON.parse(db.sections);
+      rawSections = JSON.parse(db.sections);
     } catch {
-      sections = [];
+      rawSections = [];
     }
   }
+
+  // Normalize sections to always have heading and paragraphs array
+  const sections: ArticleSection[] = rawSections.map((sec, idx) => {
+    const heading = sec.heading || sec.title || `Mục ${idx + 1}`;
+    let paragraphs: string[] = [];
+    if (Array.isArray(sec.paragraphs)) {
+      paragraphs = sec.paragraphs.map(String);
+    } else if (typeof sec.content === 'string') {
+      paragraphs = sec.content.split('\n\n').map((p: string) => p.trim()).filter(Boolean);
+      if (paragraphs.length === 0 && sec.content.trim()) {
+        paragraphs = [sec.content.trim()];
+      }
+    } else if (typeof sec.paragraph === 'string') {
+      paragraphs = [sec.paragraph.trim()];
+    } else {
+      paragraphs = ['Nội dung đang được cập nhật.'];
+    }
+
+    return {
+      heading,
+      paragraphs,
+      highlight: sec.highlight || undefined,
+      quote: sec.quote || undefined,
+    };
+  });
 
   let featuredProduct: FeaturedProduct = {
     name: 'Bông gió mỹ thuật',
