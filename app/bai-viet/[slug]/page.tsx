@@ -3,19 +3,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getArticleBySlug } from '@/lib/articles';
-import { articles } from '@/data/articles';
 
-export const revalidate = 60; // ISR 60 seconds
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  return articles.map((article) => ({
-    slug: article.slug,
-  }));
-}
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gachbonggio.vercel.app';
 
@@ -142,7 +136,7 @@ export default async function ArticleDetailPage({ params }: PageProps) {
         <nav aria-label="Breadcrumb" className="breadcrumb-nav">
           <Link href="/">Trang Chủ</Link>
           <span className="breadcrumb-separator">/</span>
-          <Link href="/#bai-viet">Bài Viết</Link>
+          <Link href="/bai-viet">Bài Viết</Link>
           <span className="breadcrumb-separator">/</span>
           <span className="breadcrumb-current">{article.category}</span>
         </nav>
@@ -264,8 +258,8 @@ export default async function ArticleDetailPage({ params }: PageProps) {
 
           {/* Back Navigation */}
           <div className="article-bottom-actions">
-            <Link href="/#bai-viet" className="btn btn-outline">
-              &larr; Xem tất cả bài viết tiêu biểu
+            <Link href="/bai-viet" className="btn btn-outline">
+              &larr; Xem tất cả bài viết kiến trúc & cẩm nang
             </Link>
             <Link href="/" className="btn btn-primary">
               Về Trang Chủ

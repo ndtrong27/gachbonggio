@@ -284,6 +284,7 @@ export default async function HomePage() {
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <Link
               href="/bai-viet"
+              prefetch={false}
               className="btn btn-outline"
               style={{
                 display: 'inline-flex',

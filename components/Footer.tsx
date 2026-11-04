@@ -47,7 +47,7 @@ export default function Footer() {
               <li><Link href="/bai-viet/giai-phap-chong-nong-thong-gio-gach-bong-gio-xi-mang">Chống nóng nhà phố bằng bông gió</Link></li>
               <li><Link href="/bai-viet/kien-truc-indochine-gach-bong-gio-trang-men-gom-co">Kiến trúc Indochine bông gió men cổ</Link></li>
               <li><Link href="/bai-viet/gach-thong-gio-dat-nung-san-vuon-nha-nghi-duong">Bông gió đất nung sân vườn mộc mạc</Link></li>
-              <li><Link href="/#bai-viet">Tất cả bài viết kiến trúc</Link></li>
+              <li><Link href="/bai-viet" prefetch={false}>Tất cả bài viết kiến trúc</Link></li>
               <li><a href="tel:0909177415">Yêu cầu bảng giá sỉ công trình</a></li>
             </ul>
           </div>

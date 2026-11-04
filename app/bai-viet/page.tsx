@@ -27,7 +27,8 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60; // ISR 60s
+export const dynamic = 'force-dynamic';
+export const revalidate = 0; // Luôn truy vấn trực tiếp từ bảng articles trong Supabase
 
 export default async function ArticlesIndexPage() {
   const articles = await getPublishedArticles();

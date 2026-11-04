@@ -1,12 +1,19 @@
+import { unstable_noStore as noStore } from 'next/cache';
 import { supabase } from '@/lib/supabase';
 import { articles as staticArticles, Article, ArticleSection, FeaturedProduct } from '@/data/articles';
 import { Tables } from '@/types/database.types';
 
 const categoryColorMap: Record<string, { bg: string; text: string; border: string }> = {
   'Bông Gió Xi Măng': { bg: '#ebf8ff', text: '#2b6cb0', border: '#bee3f8' },
+  'Bông Gió Tráng Men': { bg: '#f0fff4', text: '#276749', border: '#c6f6d5' },
+  'Bông Gió Đất Nung': { bg: '#fffaf0', text: '#c05621', border: '#feebc8' },
   'Gốm Đất Nung': { bg: '#fffaf0', text: '#c05621', border: '#feebc8' },
   'Men Sứ Cao Cấp': { bg: '#f0fff4', text: '#276749', border: '#c6f6d5' },
   'Tư Vấn Thiết Kế': { bg: '#faf5ff', text: '#6b46c1', border: '#e9d8fd' },
+  'Thiết Kế Kiến Trúc': { bg: '#faf5ff', text: '#6b46c1', border: '#e9d8fd' },
+  'Kiến Trúc & Xây Dựng': { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
+  'Kiến Trúc': { bg: '#e0f2fe', text: '#0369a1', border: '#bae6fd' },
+  'Kinh Nghiệm Xây Dựng': { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
   'Kỹ Thuật Thi Công': { bg: '#fef3c7', text: '#b45309', border: '#fde68a' },
 };
 
@@ -73,10 +80,18 @@ export function mapDbArticleToArticle(db: Tables<'articles'>): Article {
   };
 
   let formattedDate = '12/10/2026';
-  if (db.published_at) {
-    try {
-      formattedDate = new Date(db.published_at).toLocaleDateString('vi-VN');
-    } catch {}
+  const rawDate = db.published_at || db.created_at;
+  if (rawDate) {
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDate.trim())) {
+      formattedDate = rawDate.trim();
+    } else {
+      const parsed = new Date(rawDate);
+      if (!isNaN(parsed.getTime())) {
+        formattedDate = parsed.toLocaleDateString('vi-VN');
+      } else {
+        formattedDate = rawDate;
+      }
+    }
   }
 
   return {
@@ -90,7 +105,7 @@ export function mapDbArticleToArticle(db: Tables<'articles'>): Article {
     readingTime: db.reading_time || '4 phút đọc',
     publishedAt: formattedDate,
     author: db.author || 'KTS. Vĩnh Cửu Sài Gòn',
-    targetSection: '#xi-mang',
+    targetSection: db.target_section || '#xi-mang',
     featuredProduct,
     lead: db.lead || '',
     sections: sections,
@@ -105,6 +120,7 @@ export function getDefaultHomepageArticles(): Article[] {
 
 // Fetch all published articles from Supabase with fallback to static articles
 export async function getPublishedArticles(): Promise<Article[]> {
+  noStore();
   try {
     const { data, error } = await supabase
       .from('articles')
@@ -125,6 +141,7 @@ export async function getPublishedArticles(): Promise<Article[]> {
 
 // Fetch single article by slug
 export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
+  noStore();
   try {
     const { data } = await supabase
       .from('articles')
