@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { supabase } from '@/lib/supabase';
 import { checkIsAdmin } from '@/lib/admin-auth';
 import { TablesUpdate } from '@/types/database.types';
@@ -44,6 +45,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
     if (error) throw error;
 
+    revalidatePath('/');
+    revalidatePath('/san-pham');
+    if (data?.code) {
+      revalidatePath(`/san-pham/${encodeURIComponent(data.code)}`);
+    }
+    revalidatePath(`/san-pham/${numId}`);
+
     return NextResponse.json({ success: true, product: data });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
@@ -63,6 +71,10 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
     const { error } = await supabase.from('products').delete().eq('id', numId);
     if (error) throw error;
+
+    revalidatePath('/');
+    revalidatePath('/san-pham');
+    revalidatePath(`/san-pham/${numId}`);
 
     return NextResponse.json({ success: true, message: 'Đã xóa sản phẩm thành công' });
   } catch (err: any) {

@@ -74,6 +74,7 @@ export default function ProductDetailClient({
               alt={`${activeProduct.name} - ${activeProduct.code}`}
               fill
               priority
+              fetchPriority="high"
               sizes="(max-width: 768px) 100vw, 520px"
               style={{ objectFit: 'cover' }}
             />
@@ -315,6 +316,7 @@ export default function ProductDetailClient({
                     src={rel.image_url || '/images/logo.png'}
                     alt={rel.name}
                     fill
+                    loading="lazy"
                     sizes="(max-width: 768px) 50vw, 250px"
                     style={{ objectFit: 'cover' }}
                   />

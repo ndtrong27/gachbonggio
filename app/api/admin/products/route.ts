@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { supabase } from '@/lib/supabase';
 import { checkIsAdmin } from '@/lib/admin-auth';
 
@@ -80,6 +81,15 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) throw error;
+
+    revalidatePath('/');
+    revalidatePath('/san-pham');
+    if (data?.code) {
+      revalidatePath(`/san-pham/${encodeURIComponent(data.code)}`);
+    }
+    if (data?.id) {
+      revalidatePath(`/san-pham/${data.id}`);
+    }
 
     return NextResponse.json({ success: true, product: data });
   } catch (err: any) {

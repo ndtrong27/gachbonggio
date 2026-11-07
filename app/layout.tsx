@@ -176,6 +176,8 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://yxzlcvhprkdctoeqjmrw.supabase.co" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://yxzlcvhprkdctoeqjmrw.supabase.co" />
+        <link rel="preconnect" href="https://gachbonggio.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://gachbonggio.net" />
         {/* Google Analytics (gtag.js) */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}

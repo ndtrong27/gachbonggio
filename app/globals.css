@@ -3304,6 +3304,23 @@ img {
   margin-top: 4rem;
   padding-top: 3rem;
   border-top: 1px solid var(--border-light);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 24rem;
+}
+
+@keyframes detailSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.detail-skeleton-pulse {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: detailSkeletonShimmer 1.4s ease-in-out infinite;
 }
 
 .related-header {

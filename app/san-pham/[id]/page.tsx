@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -10,29 +11,74 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export const revalidate = 60; // ISR
+export const revalidate = 3600; // ISR 1 giờ (kết hợp On-Demand Revalidation khi cập nhật từ Admin)
+export const dynamicParams = true;
 
-async function getProductByIdOrCode(idOrCode: string): Promise<Tables<'products'> | null> {
-  const isNumeric = /^\d+$/.test(idOrCode);
-  
+export async function generateStaticParams() {
+  const { data } = await supabase
+    .from('products')
+    .select('id, code');
+
+  if (!data) return [];
+
+  const seen = new Set<string>();
+  const params: { id: string }[] = [];
+
+  for (const row of data) {
+    const key = (row.code || String(row.id)).trim();
+    if (key && !seen.has(key)) {
+      seen.add(key);
+      params.push({ id: key });
+    }
+  }
+
+  return params;
+}
+
+interface ProductWithVariants {
+  product: Tables<'products'>;
+  colorVariants: Tables<'products'>[];
+}
+
+const getProductWithVariants = cache(async (idOrCode: string): Promise<ProductWithVariants | null> => {
+  const decoded = decodeURIComponent(idOrCode).trim();
+  const isNumeric = /^\d+$/.test(decoded);
+
   if (isNumeric) {
     const { data } = await supabase
       .from('products')
       .select('*')
-      .eq('id', parseInt(idOrCode, 10))
+      .eq('id', parseInt(decoded, 10))
       .maybeSingle();
-    if (data) return data as Tables<'products'>;
+
+    if (data) {
+      const product = data as Tables<'products'>;
+      const { data: variants } = await supabase
+        .from('products')
+        .select('*')
+        .eq('code', product.code)
+        .order('id', { ascending: true });
+
+      return {
+        product,
+        colorVariants: (variants as Tables<'products'>[]) || [product],
+      };
+    }
   }
 
-  const decoded = decodeURIComponent(idOrCode);
+  // Khi truy cập bằng mã sản phẩm (99% trường hợp): lấy cả sản phẩm và toàn bộ biến thể màu chỉ trong 1 truy vấn
   const { data: codeData } = await supabase
     .from('products')
     .select('*')
     .eq('code', decoded)
-    .limit(1);
+    .order('id', { ascending: true });
 
   if (codeData && codeData.length > 0) {
-    return codeData[0] as Tables<'products'>;
+    const variants = codeData as Tables<'products'>[];
+    return {
+      product: variants[0],
+      colorVariants: variants,
+    };
   }
 
   // Fallback case-insensitive
@@ -40,48 +86,44 @@ async function getProductByIdOrCode(idOrCode: string): Promise<Tables<'products'
     .from('products')
     .select('*')
     .ilike('code', decoded)
-    .limit(1);
+    .order('id', { ascending: true });
 
   if (fallbackData && fallbackData.length > 0) {
-    return fallbackData[0] as Tables<'products'>;
+    const variants = fallbackData as Tables<'products'>[];
+    return {
+      product: variants[0],
+      colorVariants: variants,
+    };
   }
 
   return null;
-}
+});
 
-async function getColorVariants(code: string): Promise<Tables<'products'>[]> {
-  const { data } = await supabase
-    .from('products')
-    .select('*')
-    .eq('code', code)
-    .order('id', { ascending: true });
-
-  return (data as Tables<'products'>[]) || [];
-}
-
-async function getRelatedProducts(category: string, currentId: number): Promise<Tables<'products'>[]> {
+const getRelatedProducts = cache(async (category: string, currentCode: string, currentId: number): Promise<Tables<'products'>[]> => {
   const { data } = await supabase
     .from('products')
     .select('*')
     .eq('category', category)
+    .neq('code', currentCode)
     .neq('id', currentId)
     .limit(4);
 
   return (data as Tables<'products'>[]) || [];
-}
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gachbonggio.vercel.app';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
-  const product = await getProductByIdOrCode(id);
+  const result = await getProductWithVariants(id);
 
-  if (!product) {
+  if (!result) {
     return {
       title: 'Không tìm thấy sản phẩm | Vĩnh Cửu Sài Gòn',
     };
   }
 
+  const { product } = result;
   const title = `${product.name} - ${product.code} | Gạch Bông Gió Vĩnh Cửu Sài Gòn`;
   const description = `Chi tiết ${product.name} (${product.code}), quy cách ${product.size || 'chuẩn'}, màu ${product.color || 'tự nhiên'}. Phân phối sỉ lẻ giá tận xưởng sản xuất Vĩnh Cửu Sài Gòn. Hotline: 0909.177.415.`;
   const productUrl = `${siteUrl}/san-pham/${encodeURIComponent(product.code || product.id.toString())}`;
@@ -110,14 +152,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const product = await getProductByIdOrCode(id);
+  const result = await getProductWithVariants(id);
 
-  if (!product) {
+  if (!result) {
     notFound();
   }
 
-  const colorVariants = await getColorVariants(product.code);
-  const relatedProducts = await getRelatedProducts(product.category, product.id);
+  const { product, colorVariants } = result;
+  const relatedProducts = await getRelatedProducts(product.category, product.code, product.id);
   const dims = parseProductDimensions(product.size, product.category);
 
   // Anchor link based on category
